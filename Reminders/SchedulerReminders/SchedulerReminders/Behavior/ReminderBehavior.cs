@@ -13,8 +13,27 @@ namespace SchedulerReminders
 
         private async void ReminderBehavior_ReminderAlertOpening(object? sender, ReminderAlertOpeningEventArgs e)
         {
-            ObservableCollection<SchedulerAppointment> appointments = (sender as SfScheduler).AppointmentsSource as ObservableCollection<SchedulerAppointment>;
-            bool snooze = await Application.Current.MainPage.DisplayAlert("Reminder", e.Reminders[0].Appointment.Subject + " - " + e.Reminders[0].Appointment.StartTime.ToString(" dddd, MMMM dd, yyyy, hh:mm tt"), "Snooze", "Dismiss");
+            var scheduler = sender as SfScheduler;
+            if (scheduler == null)
+            {
+                return;
+            }
+
+            var appointments = scheduler.AppointmentsSource as ObservableCollection<SchedulerAppointment>;
+            if (appointments == null)
+            {
+                return;
+            }
+
+            bool snooze = false;
+
+            if (Application.Current?.Windows.FirstOrDefault()?.Page is Page page)
+            {
+                 snooze = await page.DisplayAlert("Reminder", e.Reminders[0].Appointment.Subject + " - " + e.Reminders[0].Appointment.StartTime.ToString(" dddd, MMMM dd, yyyy, hh:mm tt"), "Snooze", "Dismiss");
+            }
+
+
+            
 
             if (snooze)
             {
