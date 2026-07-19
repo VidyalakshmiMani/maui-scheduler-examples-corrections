@@ -1,4 +1,6 @@
-﻿namespace SchedulerReminders;
+﻿using Syncfusion.Maui.Scheduler;
+
+namespace SchedulerReminders;
 
 public partial class MainPage : ContentPage
 {
