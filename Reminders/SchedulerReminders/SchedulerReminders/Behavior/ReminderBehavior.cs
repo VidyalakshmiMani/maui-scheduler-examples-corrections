@@ -50,14 +50,17 @@ namespace SchedulerReminders
             if (snooze)
             {
                 TimeSpan snoozeTime = TimeSpan.FromMinutes(2);
+                // To change alert time for future appointment reminder
                 if (appointment.ActualStartTime > DateTime.Now && !appointment.IsAllDay)
                 {
                     reminder.TimeBeforeStart = appointment.StartTime - reminder.AlertTime - snoozeTime;
                 }
+                // To change alert time for all day appointment reminder
                 else if (appointment.IsAllDay)
                 {
                     reminder.TimeBeforeStart = appointment.StartTime.Date.AddSeconds(DateTime.Now.Second) - DateTime.Now - snoozeTime;
                 }
+                // To change alert time for overdue appointment reminder
                 else
                 {
                     reminder.TimeBeforeStart = appointment.StartTime.AddSeconds(DateTime.Now.Second) - DateTime.Now - snoozeTime;
@@ -77,7 +80,7 @@ namespace SchedulerReminders
                     {
                         changedExceptionDate,
                     };
-
+                    // Clone parent details
                     SchedulerAppointment exceptionAppointment = new SchedulerAppointment
                     {
                         Id = 2,
@@ -88,7 +91,7 @@ namespace SchedulerReminders
                         RecurrenceId = 1,
                         Reminders = new ObservableCollection<SchedulerReminder> { new SchedulerReminder { TimeBeforeStart = reminder.TimeBeforeStart } },
                     };
-
+                    // For Recurrence appointment, if current occurrence need to snooze then need to add changed occurrence for reminder occurrence snoozed.
                     if (!appointments.Contains(exceptionAppointment))
                     {
                         appointments.Add(exceptionAppointment);
@@ -97,6 +100,7 @@ namespace SchedulerReminders
             }
             else
             {
+                // For Recurrence appointment, if current occurrence need to dismiss then need to add changed occurrence for reminder occurrence dismissed
                 if (!string.IsNullOrEmpty(appointment.RecurrenceRule))
                 {
                     SchedulerAppointment? patternAppointment = appointments.FirstOrDefault(x => x.Id == appointment.Id);
@@ -111,7 +115,7 @@ namespace SchedulerReminders
                     {
                         changedExceptionDate,
                     };
-
+                    // Clone parent details
                     SchedulerAppointment exceptionAppointment = new SchedulerAppointment
                     {
                         Id = 3,
@@ -129,6 +133,7 @@ namespace SchedulerReminders
                         appointments.Add(exceptionAppointment);
                     }
                 }
+                // To dismiss normal reminder
                 else
                 {
                     for (int i = e.Reminders.Count - 1; i >= 0; i--)
